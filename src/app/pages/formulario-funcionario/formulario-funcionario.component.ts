@@ -4,8 +4,15 @@ import { Uf } from 'src/app/shared/model/uf.model';
 import { forkJoin, Observable } from 'rxjs';
 import { Municipio } from 'src/app/shared/model/municipio.model';
 import { tap, filter, map } from 'rxjs/operators';
-import { FormGroup, FormControl } from '@angular/forms';
+import { FormGroup, FormControl, Validators } from '@angular/forms';
 import { Funcionario } from 'src/app/shared/model/_funcionario.model';
+import { FormManagementService } from './form-management.service';
+import { EstadoCivil } from 'src/app/shared/model/estado-civil.model';
+import { TipoLogradouro } from 'src/app/shared/model/tipo-logradouro.model';
+import { Escolaridade } from 'src/app/shared/model/escolaridade.model';
+import { RacaCor } from 'src/app/shared/model/raca-cor.model';
+import { Sexo } from 'src/app/shared/model/sexo.model';
+import { Nacionalidade } from 'src/app/shared/model/nacionalidade.model';
 
 @Component({
   selector: 'app-formulario-funcionario',
@@ -15,68 +22,46 @@ import { Funcionario } from 'src/app/shared/model/_funcionario.model';
 export class FormularioFuncionarioComponent implements OnInit {
 
   formulario: FormGroup;
-  funcionario = new Funcionario();
   uf$: Observable<Uf[]>;
+  estadoCivil$: Observable<EstadoCivil[]>;
+  logradouro$: Observable<TipoLogradouro[]>;
   municipios$: Observable<Municipio[]>;
+  municipiosNaturalidade$: Observable<Municipio[]>;
+  escolaridade$: Observable<Escolaridade[]>;
+  raca$: Observable<RacaCor[]>;
+  sexo$: Observable<Sexo[]>;
+  nacionalidade$: Observable<Nacionalidade[]>;
 
-  constructor(private formularioFuncionarioService: FormularioFuncionarioService) { }
+  constructor(private formularioFuncionarioService: FormularioFuncionarioService,
+              public formManagementService: FormManagementService) { }
 
   ngOnInit() {
-    this.formularioBuilder();
-    this.requisicoesIniciaisHTTP();
-
+    this.requisicoes();
+    //Recebe o formulario que foi criado no serviço de gerenciamento
+    this.formulario = this.formManagementService.fomulario();
   }
 
-  formularioBuilder() {
-    this.formulario = new FormGroup({
-      nome: new FormControl(this.funcionario.nome),
-      mae: new FormControl(),
-      pai: new FormControl(),
-      cep: new FormControl(),
-      dataNascimento: new FormControl(),
-      tipoLogradouro: new FormControl(),
-      endereco: new FormControl(),
-      numero: new FormControl(),
-      uf: new FormControl(),
-      cidade: new FormControl(),
-      ddd: new FormControl(),
-      telefone: new FormControl(),
-      email: new FormControl(),
-      estadoCivil: new FormControl(),
-      nacionalidade: new FormControl(),
-      escolaridade: new FormControl(),
-      ufNascimento: new FormControl(),
-      municipioNascimento: new FormControl(),
-      racaCor: new FormControl(),
-      sexo: new FormControl()
-    });
-  }
-
-
-  requisicoesIniciaisHTTP() {
+  requisicoes() {
     this.uf$ = this.formularioFuncionarioService.requisicaoGetHttp('uf');
-    return forkJoin([this.uf$]).subscribe();
+    this.estadoCivil$ = this.formularioFuncionarioService.requisicaoGetHttp('estadoCivil');
+    this.logradouro$ = this.formularioFuncionarioService.requisicaoGetHttp('logradouro');
+    this.escolaridade$ = this.formularioFuncionarioService.requisicaoGetHttp('escolaridade');
+    this.raca$ = this.formularioFuncionarioService.requisicaoGetHttp('raca');
+    this.sexo$ = this.formularioFuncionarioService.requisicaoGetHttp('sexo');
+    this.nacionalidade$ = this.formularioFuncionarioService.requisicaoGetHttp('nacionalidade');
+
+    return forkJoin([this.uf$, this.estadoCivil$, this.logradouro$, this.escolaridade$, this.raca$, this.sexo$, this.nacionalidade$]).subscribe();
   }
 
-  setUf(uf: Uf, event: any) {
-    event.isUserInput ? this.filtrarMunicipioPorUf(uf) : '';
-  }
+  filtrarMunicipioPorUf(uf: Uf, event: any, campo: any) {
+    if (event.isUserInput) {
+      const municipios$ = this.formularioFuncionarioService.requisicaoGetHttp('municipio')
+      .pipe(
+        map((municipio: Municipio[]) => municipio.filter(m => m.uf.uf === uf.uf)
+      ));
 
-  setMunicipio(municipio: Municipio) {
+      campo === 'uf' ? this.municipios$ = municipios$ : this.municipiosNaturalidade$ = municipios$;
 
-  }
-
-  filtrarMunicipioPorUf(uf: Uf) {
-    this.municipios$ = this.formularioFuncionarioService.requisicaoGetHttp('municipio')
-    .pipe(
-      map((municipio: Municipio[]) => municipio.filter(m => m.uf.uf === uf.uf)
-    ));
-  }
-
-
-  alterarValor() {
-    this.funcionario.nome = Math.random().toString();
-    console.log(this.funcionario.nome);
-    console.log(this.formulario.value);
+    }
   }
 }

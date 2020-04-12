@@ -1,30 +1,185 @@
-<mat-form-field>
-  <mat-label>Uf</mat-label>
-  <mat-select >
-    <mat-option
-      *ngFor="let uf of uf$ | async"
-      [value]="uf.uf"
-      (onSelectionChange)="setUf(uf, $event)">
-      {{uf.uf}}
-    </mat-option>
-  </mat-select>
-</mat-form-field>
+<form [formGroup]="formulario" style="padding: 100px;">
+  <mat-form-field style="width: 300px; margin-right: 50px;">
+    <mat-label>Nome: </mat-label>
+    <input matInput formControlName="nome">
+  </mat-form-field>
 
-<mat-form-field>
-  <mat-label>Municipio</mat-label>
-  <mat-select>
-    <mat-option
-      *ngFor="let municipio of municipios$ | async"
-      [value]="municipio.uf"
-      (optionSelected)="setMunicipio(municipio)">
-      {{municipio.municipio}}
-    </mat-option>
-  </mat-select>
-</mat-form-field>
+  <mat-form-field style="width: 200px; margin-right: 50px;">
+    <mat-label>Data de nascimento: </mat-label>
+    <input matInput [matDatepicker]="picker" formControlName="dataNascimento">
+    <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+    <mat-datepicker #picker></mat-datepicker>
+  </mat-form-field>
 
-<mat-form-field class="example-full-width">
-  <mat-label>Favorite food</mat-label>
-  <input matInput placeholder="Ex. Pizza" value="Sushi">
-</mat-form-field>
+  <mat-form-field style="width: 150px; margin-right: 50px;">
+    <mat-label>Sexo: </mat-label>
+    <mat-select formControlName="sexo">
+      <mat-option
+        *ngFor="let sexo of sexo$ | async"
+        [value]="sexo.sexo"
+        (optionSelected)="formManagementService.funcionario.value.sexo = sexo">
+        {{sexo.sexo}}
+      </mat-option>
+    </mat-select>
+  </mat-form-field>
 
-<p (click)="alterarValor()">Click em mim</p>
+  <mat-form-field style="width: 150px; margin-right: 50px;">
+    <mat-label>Raça / Cor: </mat-label>
+    <mat-select formControlName="racaCor">
+      <mat-option
+        *ngFor="let raca of raca$ | async"
+        [value]="raca.raca"
+        (optionSelected)="formManagementService.funcionario.value.racaCor = raca">
+        {{raca.raca}}
+      </mat-option>
+    </mat-select>
+  </mat-form-field>
+
+  <mat-form-field style="width: 150px; margin-right: 50px;">
+    <mat-label>Estado civil: </mat-label>
+    <mat-select formControlName="estadoCivil">
+      <mat-option
+        *ngFor="let estadoCivil of estadoCivil$ | async"
+        [value]="estadoCivil.estadoCivil"
+        (optionSelected)="formManagementService.funcionario.value.estadoCivil = estadoCivil">
+        {{estadoCivil.estadoCivil}}
+      </mat-option>
+    </mat-select>
+  </mat-form-field>
+
+  <mat-form-field style="width: 150px; margin-right: 50px;">
+    <mat-label>Escolaridade: </mat-label>
+    <mat-select formControlName="escolaridade">
+      <mat-option
+        *ngFor="let escolaridade of escolaridade$ | async"
+        [value]="escolaridade.escolaridade"
+        (optionSelected)="formManagementService.funcionario.value.escolaridade = escolaridade">
+        {{escolaridade.escolaridade}}
+      </mat-option>
+    </mat-select>
+  </mat-form-field>
+
+  <mat-form-field style="width: 150px; margin-right: 50px;">
+    <mat-label>Nacionalidade: </mat-label>
+    <mat-select formControlName="nacionalidade">
+      <mat-option
+        *ngFor="let nacionalidade of nacionalidade$ | async"
+        [value]="nacionalidade.nacionalidade"
+        (optionSelected)="formManagementService.funcionario.value.nacionalidade = nacionalidade">
+        {{nacionalidade.nacionalidade}}
+      </mat-option>
+    </mat-select>
+  </mat-form-field>
+
+  <mat-form-field style="width: 100px; margin-right: 50px;">
+    <mat-label>Uf naturalidade: </mat-label>
+    <mat-select formControlName="ufNascimento">
+      <mat-option
+        *ngFor="let uf of uf$ | async"
+        [value]="uf.uf"
+        (onSelectionChange)="filtrarMunicipioPorUf(uf, $event, 'ufNaturalidade')"
+        (onSelectionChange)="formManagementService.funcionario.value.ufNascimento = uf">
+        {{uf.uf}}
+      </mat-option>
+    </mat-select>
+  </mat-form-field>
+
+  <mat-form-field style="width: 200px; margin-right: 50px;">
+    <mat-label>Municipio naturalidade: </mat-label>
+    <mat-select formControlName="municipioNascimento">
+      <mat-option
+        *ngFor="let municipio of municipiosNaturalidade$ | async"
+        [value]="municipio.municipio"
+        (optionSelected)="formManagementService.funcionario.value.municipioNascimento = municipio">
+        {{municipio.municipio}}
+      </mat-option>
+    </mat-select>
+  </mat-form-field>
+
+  <mat-form-field style="width: 300px; margin-right: 50px;">
+    <mat-label>Mãe: </mat-label>
+    <input matInput formControlName="mae">
+  </mat-form-field>
+
+  <mat-form-field style="width: 300px; margin-right: 50px;">
+    <mat-label>Pai: </mat-label>
+    <input matInput formControlName="pai">
+  </mat-form-field>
+
+  <mat-form-field style="width: 100px; margin-right: 50px;">
+    <mat-label>Uf: </mat-label>
+    <mat-select formControlName="uf">
+      <mat-option
+        *ngFor="let uf of uf$ | async"
+        [value]="uf.uf"
+        (onSelectionChange)="filtrarMunicipioPorUf(uf, $event, 'uf')"
+        (onSelectionChange)="formManagementService.funcionario.value.uf = uf">
+        {{uf.uf}}
+      </mat-option>
+    </mat-select>
+  </mat-form-field>
+
+  <mat-form-field style="width: 200px; margin-right: 50px;">
+    <mat-label>Municipio: </mat-label>
+    <mat-select formControlName="cidade">
+      <mat-option
+        *ngFor="let municipio of municipios$ | async"
+        [value]="municipio.municipio"
+        (optionSelected)="formManagementService.funcionario.value.cidade = municipio">
+        {{municipio.municipio}}
+      </mat-option>
+    </mat-select>
+  </mat-form-field>
+
+  <mat-form-field style="width: 150px; margin-right: 50px;">
+    <mat-label>Cep: </mat-label>
+    <input matInput formControlName="cep">
+  </mat-form-field>
+
+  <mat-form-field style="width: 150px; margin-right: 50px;">
+    <mat-label>Logradouro: </mat-label>
+    <mat-select formControlName="tipoLogradouro">
+      <mat-option
+        *ngFor="let logradouro of logradouro$ | async"
+        [value]="logradouro.logradouro"
+        (optionSelected)="formManagementService.funcionario.value.logradouro = logradouro">
+        {{logradouro.logradouro}}
+      </mat-option>
+    </mat-select>
+  </mat-form-field>
+
+  <mat-form-field style="width: 300px; margin-right: 50px;">
+    <mat-label>Endereço: </mat-label>
+    <input matInput formControlName="endereco">
+  </mat-form-field>
+
+  <mat-form-field style="width: 150px; margin-right: 50px;">
+    <mat-label>Número: </mat-label>
+    <input matInput formControlName="numero">
+  </mat-form-field>
+
+  <mat-form-field style="width: 150px; margin-right: 50px;">
+    <mat-label>DDD: </mat-label>
+    <input matInput formControlName="ddd">
+  </mat-form-field>
+
+  <mat-form-field style="width: 300px; margin-right: 50px;">
+    <mat-label>Telefone: </mat-label>
+    <input matInput formControlName="telefone">
+  </mat-form-field>
+
+  <mat-form-field style="width: 300px; margin-right: 50px;">
+    <mat-label>Email: </mat-label>
+    <input matInput formControlName="email">
+  </mat-form-field>
+
+  <div>
+    <button mat-raised-button color="primary" [disabled]="formulario.invalid">Salvar</button>
+  </div>
+
+</form>
+
+
+
+
+
