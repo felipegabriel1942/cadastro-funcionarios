@@ -1,0 +1,30 @@
+<mat-form-field>
+  <mat-label>Uf</mat-label>
+  <mat-select >
+    <mat-option
+      *ngFor="let uf of uf$ | async"
+      [value]="uf.uf"
+      (onSelectionChange)="setUf(uf, $event)">
+      {{uf.uf}}
+    </mat-option>
+  </mat-select>
+</mat-form-field>
+
+<mat-form-field>
+  <mat-label>Municipio</mat-label>
+  <mat-select>
+    <mat-option
+      *ngFor="let municipio of municipios$ | async"
+      [value]="municipio.uf"
+      (optionSelected)="setMunicipio(municipio)">
+      {{municipio.municipio}}
+    </mat-option>
+  </mat-select>
+</mat-form-field>
+
+<mat-form-field class="example-full-width">
+  <mat-label>Favorite food</mat-label>
+  <input matInput placeholder="Ex. Pizza" value="Sushi">
+</mat-form-field>
+
+<p (click)="alterarValor()">Click em mim</p>
